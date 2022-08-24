@@ -86,5 +86,56 @@ namespace WebApplication1.Model
 ```bash
 Install-Package FluentValidation
 ```
+İkinci olarak startup.cs 'den fluent validation servisini projeye entegre etmeliyiz
+```C#
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddRazorPages();
+            services.AddControllersWithViews().AddFluentValidation(x=> x.RegisterValidatorsFromAssemblyContaining<Startup>());
+// STARTUP CLASSININ BULUNDUĞU DİZİNDEKİ TÜM VALİDASYON CLASSLARINI EKLEMEYE YARAR
+        }
+```
+sonraki adımda Model classı altında Validators adlı bir klasör acıp tüm validation classlarını içine ekleyebiliriz
 
+Örnek Bir Validator classı valdiation kurallarımızı classımızın constructor metodunda rulefor fonksiyonuyla aşağıdaki gibi tanımlarız
+```c#
+using FluentValidation;
+
+namespace WebApplication1.Model.Validators
+{
+	public class ProductValidator:AbstractValidator<Product>
+	{
+		public ProductValidator()
+		{
+			RuleFor(x=> x.Name.Length).NotEmpty().WithMessage("İsim Boş Bırakılamaz");
+		}
+
+	}
+}
+
+```
+startup.cs classımızdan validation classlarımızı ekleyelim
+```c#
+		public void ConfigureServices(IServiceCollection services)
+		{
+			services.AddRazorPages();
+			services.AddValidatorsFromAssemblyContaining<ProductValidator>();
+
+
+
+		}
+
+```
+View'da hiç bir değişiklik yapmadan aynı şekilde kullanabiliriz.
+```CSHTML
+@model WebApplication1.Model.Product
+@addTagHelper * ,Microsoft.AspNetCore.Mvc.TagHelpers
+
+
+<form asp-action="CreateProduct" asp-controller="Home"> 
+	<input type="text" asp-for="Name" /> <span asp-validation-for="Name"></span> <br />
+	<input type="number" asp-for="stock" /> <span asp-validation-for="stock"></span> <br />
+	<button>gönder</button>
+</form>
+```
 
