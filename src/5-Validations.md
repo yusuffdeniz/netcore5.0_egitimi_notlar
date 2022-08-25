@@ -139,3 +139,26 @@ View'da hiç bir değişiklik yapmadan aynı şekilde kullanabiliriz.
 </form>
 ```
 
+Şuana Kadar Yazdığımız Tüm Validasyonlar server tarafı içinde server tarafında yapılan validasyonları aktarmayı ise şöyle yapıyoruz
+
+- ### Server Tarafındaki Validasyonları Client'a aktarma
+Bu işlemi gerçekleştirmek için wwwroot dizinimize client side library kullanarak şunları indirmeliyiz
+- jquery
+- jquery-validate
+- jquery-validation-unobtrusive
+bu kütüphaneleri yükledikten sonra client tabanlı validation yaptıgımız gerekli view dosyasında tanımlamamız yeterlidir!
+```cshtml
+@model WebApplication1.Model.Product
+@addTagHelper * ,Microsoft.AspNetCore.Mvc.TagHelpers
+
+<script src="~/jquery/jquery.min.js"></script>
+<script src="~/jquery-validate/jquery.validate.min.js"></script>
+<script src=~/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js></script>
+
+
+<form asp-action="CreateProduct" asp-controller="Home"> 
+	<input type="text" asp-for="Name" /> <span asp-validation-for="Name"></span> <br />
+	<input type="number" asp-for="stock" /> <span asp-validation-for="stock"></span> <br />
+	<button>gönder</button>
+</form>
+```
